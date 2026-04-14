@@ -5,8 +5,9 @@
 {% block extra-dependencies %}
 <script>
     $(document).ready(function() {
-        $('input[type="text"], input[type="email"], select').addClass('form-control mb-2');
+        $('input[type="text"], input[type="email"], select, textarea').addClass('form-control mb-2');
         $('input').attr('autocomplete', 'off');
+        $('textarea').css({'border': 'none', 'border-radius': '0 0 15px 15px', 'resize': 'none', 'padding': '1rem'});
     });
 </script>
 <style>
@@ -151,6 +152,56 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        {% if comments is not None %}
+                        <!-- Comments Section (if interacting with profile as instructor/admin) -->
+                        <h4 style="font-weight:700; border-bottom:1px solid #f1f5f9; padding-bottom:1rem; margin-top:2rem; margin-bottom:1.5rem;">Notes & Comments</h4>
+                        
+                        <!-- Post Comment Form -->
+                        <div class="card mb-4" style="border-radius:15px; border:1px solid #e2e8f0; box-shadow:none;">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="card-header bg-light" style="border-bottom:1px solid #e2e8f0; padding:1rem 1.5rem;">
+                                    <div class="d-flex align-items-center">
+                                        <div class="font-weight-bold">Leave a Note</div>
+                                        {% if request.user.profile.position == 'instructor' %}
+                                            <div class="ml-4 d-flex align-items-center">
+                                                {{ form.public }} <label class="mb-0 ml-2" style="font-size:0.9rem; font-weight:600; cursor:pointer;">Public</label>
+                                            </div>
+                                            <div class="ml-2 text-muted" style="font-size:0.8rem;">(Non-public notes are visible only to instructors)</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    {{ form.comment }}
+                                </div>
+                                <div class="card-footer bg-white border-top-0 text-right" style="padding:1rem 1.5rem;">
+                                    <button type="submit" class="btn btn-primary btn-sm px-4" style="border-radius:50px; font-weight:600;">Post Note</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- List Comments -->
+                        {% for comment in comments %}
+                            <div class="card mb-3" style="border-radius:12px; border:1px solid #f1f5f9; background:#f8fafc; box-shadow:none;">
+                                <div class="card-body py-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div>
+                                            <span class="font-weight-bold text-primary">{{ comment.author.get_full_name }}</span>
+                                            {% if not comment.public %}
+                                                <span class="badge badge-dark ml-2" style="font-size:0.7rem; padding:0.3rem 0.5rem; border-radius:6px;">Hidden</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-muted" style="font-size:0.8rem;">{{ comment.created_date|date:"M d, Y H:i" }}</div>
+                                    </div>
+                                    <p class="mb-0" style="color:var(--text-main); font-size:0.95rem;">{{ comment.comment }}</p>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted font-italic text-center py-3">No notes or comments yet.</p>
+                        {% endfor %}
+                        {% endif %}
+
                     {% else %}
                         <!-- Edit Form -->
                         <h4 style="font-weight:700; border-bottom:1px solid #f1f5f9; padding-bottom:1rem; margin-bottom:1.5rem;">Update Information</h4>
