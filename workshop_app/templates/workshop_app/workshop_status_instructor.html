@@ -1,136 +1,150 @@
 {% extends "workshop_app/base.html" %}
 {% load static %}
 
-{% block title %}
-    Workshop Status
-{% endblock %}
+{% block title %}Workshop Status — Instructor{% endblock %}
 
 {% block extra-dependencies %}
-    <style >
-    .table-heading{
-        color: #04a9cf;
-    }
-    </style>
-    <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
-    <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
-    <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'workshop_app/css/jquery-ui.css' %}" type="text/css"/>
+  <script src="{% static 'workshop_app/js/jquery-1.12.4.js' %}"></script>
+  <script src="{% static 'workshop_app/js/jquery-ui.min.js' %}"></script>
 {% endblock %}
 {% block extra-custom-scripts %}
-    {% load static %}
-    <script src="{% static 'workshop_app/js/datepicker.js' %}"></script>
+  {% load static %}
+  <script src="{% static 'workshop_app/js/datepicker.js' %}"></script>
 {% endblock %}
 
-
 {% block content %}
-    {% if not workshops %}
-        <div class="container">
-            <div class="jumbotron">
-                <h1>Welcome {{ user.first_name }}</h1>
-                <p>Your workshop related information will be shown here, Please navigate to <b>Workshop list</b> and
-                    depending upon
-                    your expertise and availability create a workshop by going to
-                    <b>Create Workshop</b>.</p>
-            </div>
+<div class="container-fluid px-4">
+  {% if not workshops %}
+    <div class="hero-banner">
+      <div class="hero-orb" style="width:280px;height:280px;top:-100px;right:-80px;"></div>
+      <div class="hero-orb" style="width:160px;height:160px;bottom:-60px;left:-40px;"></div>
+      <h1>Welcome, Instructor {{ user.first_name|default:user.username }}! 🎓</h1>
+      <p>No workshops require your attention right now. Visit the <strong>Workshop Types</strong> section to manage available workshop offerings.</p>
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#a855f7,#6366f1);">
+          <div class="stat-value">0</div><div class="stat-label">Open Requests</div>
+          <span class="stat-icon material-icons">inbox</span>
         </div>
-    {% else %}
-        <h3 class="text-center">The status of your workshops </h3>
-        <br>
-
-        <!-- Accepted View -->
-        <br>
-        <div class="container">
-            <h3 align="center" class="table-heading"><strong>Workshops Accepted</strong></h3>
-            <table class="table table-striped table-responsive-sm">
-                <thead>
-                <tr>
-                    <th>Coordinator Name</th>
-                    <th>Institute</th>
-                    <th>Workshop Name</th>
-                    <th>Workshop Day</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                {% for workshop in workshops %}
-                    <tbody>
-                    <tr>
-                        {% if workshop.status %}
-                            <td>
-                                <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}">
-                                    {{ workshop.coordinator.get_full_name }}</a>
-                            </td>
-                            <td>{{ workshop.coordinator.profile.institute }}</td>
-                            <td>{{ workshop.workshop_type |capfirst }}</td>
-                            <td>{{ workshop.date | date }}
-
-                                {% if workshop.date > today %}
-                                    <span class="material-icons datepicker btn"
-                                          data-toggle="popinfo"
-                                          title="Note"
-                                          data-content="Click here to change date"
-                                          onclick="changeDate('R,{{ workshop.date| safe }}, {{ forloop.counter }}')">event</span>
-                                    <div class="myDialogR{{ forloop.counter }}" style="display: none;"
-                                         title="Select New Date">
-                                        <form method="post" action="{% url 'workshop_app:change_workshop_date' workshop.id %}">
-                                            <input type="text" placeholder="New date" name="new_date"
-                                                   class="rDate{{ forloop.counter }}"/><br>
-                                            {% csrf_token %}
-                                            <button class="btn btn-primary btn-xs" type="submit">Save</button>
-                                        </form>
-                                    </div>
-                                {% endif %}
-                            </td>
-                            <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
-                        {% endif %}
-                    </tr>
-                    </tbody>
-
-                {% endfor %}
-
-            </table>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#10b981,#059669);">
+          <div class="stat-value">0</div><div class="stat-label">Accepted</div>
+          <span class="stat-icon material-icons">check_circle</span>
         </div>
-
-
-        <!-- Proposed View -->
-        <br>
-        <div class="container">
-            <h3 class="text-center table-heading"><strong>Workshops Proposed By Coordinators</strong>
-            </h3>
-            <table class="table table-striped table-responsive-sm">
-                <thead>
-                <tr>
-                    <th>Coordinator Name</th>
-                    <th>Institute</th>
-                    <th>Workshop Name</th>
-                    <th>Workshop Day</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                {% csrf_token %}
-                {% for workshop in workshops %}
-                    <tbody>
-                    <tr>
-                        {% if not workshop.status and workshop.tnc_accepted %}
-                            <td>
-                                <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}">
-                                    {{ workshop.coordinator.get_full_name }}</a>
-                            </td>
-                            <td>{{ workshop.coordinator.profile.institute }}</td>
-                            <td>{{ workshop.workshop_type }}</td>
-                            <td>{{ workshop.date | date }}</td>
-                            <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
-                            <td>
-                                <a href="{% url 'workshop_app:accept_workshop' workshop.id %}" class="btn btn-primary btn-sm"  onclick="return confirm('Once accepted you cannot reject, you have to personally contact the Coordinator if the workshop is to be cancelled. Are you sure you want to accept the workshop?')">
-                                    Accept
-                                </a>
-                            </td>
-                        {% endif %}
-                    </tr>
-                    </tbody>
-
-                {% endfor %}
-            </table>
+      </div>
+    </div>
+  {% else %}
+    <!-- Hero Strip -->
+    <div class="hero-banner mb-4" style="padding:2rem 3rem;">
+      <div class="hero-orb" style="width:200px;height:200px;top:-60px;right:-60px;"></div>
+      <h1 style="font-size:1.5rem;">Instructor Dashboard</h1>
+      <p>Review workshop proposals and manage your scheduled sessions.</p>
+    </div>
+    <div class="row mb-4">
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#a855f7,#6366f1);">
+          <div class="stat-value">{{ workshops|length }}</div><div class="stat-label">Total Workshops</div>
+          <span class="stat-icon material-icons">folder_open</span>
         </div>
-    {% endif %}
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+          <div class="stat-value">
+            {% with cnt=0 %}{% for w in workshops %}{% if not w.status %}{% with c2=cnt|add:1 %}{% endwith %}{% endif %}{% endfor %}{{ cnt }}{% endwith %}
+          </div>
+          <div class="stat-label">Awaiting Action</div>
+          <span class="stat-icon material-icons">pending</span>
+        </div>
+      </div>
+    </div>
 
+    <!-- Accepted Workshops -->
+    <div class="section-title">Workshops You've Accepted</div>
+    <div class="table-card mb-4">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Coordinator</th>
+            <th>Institute</th>
+            <th>Workshop</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for workshop in workshops %}
+            {% if workshop.status %}
+            <tr>
+              <td><a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" style="color:var(--primary);font-weight:600;text-decoration:none;">{{ workshop.coordinator.get_full_name }}</a></td>
+              <td>{{ workshop.coordinator.profile.institute }}</td>
+              <td>{{ workshop.workshop_type|capfirst }}</td>
+              <td>
+                {{ workshop.date|date }}
+                {% if workshop.date > today %}
+                  <button class="btn btn-sm ml-2" style="padding:0.2rem 0.5rem; background:var(--primary-light); color:var(--primary); border:none; border-radius:8px;"
+                    onclick="changeDate('R,{{ workshop.date|safe }}, {{ forloop.counter }}')">
+                    <span class="material-icons" style="font-size:0.9rem;vertical-align:middle;">edit_calendar</span>
+                  </button>
+                  <div class="myDialogR{{ forloop.counter }}" style="display:none;" title="Select New Date">
+                    <form method="post" action="{% url 'workshop_app:change_workshop_date' workshop.id %}">
+                      <input type="text" placeholder="New date" name="new_date" class="form-control rDate{{ forloop.counter }} mt-2 mb-2"/>
+                      {% csrf_token %}
+                      <button class="btn btn-primary btn-sm" type="submit">Save</button>
+                    </form>
+                  </div>
+                {% endif %}
+              </td>
+              <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No accepted workshops yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pending Proposals -->
+    <div class="section-title">Coordinator Proposals Awaiting Action</div>
+    <div class="table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Coordinator</th>
+            <th>Institute</th>
+            <th>Workshop</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% csrf_token %}
+          {% for workshop in workshops %}
+            {% if not workshop.status and workshop.tnc_accepted %}
+            <tr>
+              <td><a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" style="color:var(--primary);font-weight:600;text-decoration:none;">{{ workshop.coordinator.get_full_name }}</a></td>
+              <td>{{ workshop.coordinator.profile.institute }}</td>
+              <td>{{ workshop.workshop_type }}</td>
+              <td>{{ workshop.date|date }}</td>
+              <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
+              <td>
+                <a href="{% url 'workshop_app:accept_workshop' workshop.id %}" class="btn btn-success btn-sm"
+                  onclick="return confirm('Once accepted you cannot reject. Are you sure you want to accept this workshop?')">
+                  Accept
+                </a>
+              </td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No pending proposals.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

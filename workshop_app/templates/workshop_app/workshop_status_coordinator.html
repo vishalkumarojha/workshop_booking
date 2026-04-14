@@ -1,88 +1,159 @@
 {% extends "workshop_app/base.html" %}
+{% load static %}
 
-{% block title %}
-    My Workshops
-{% endblock %}
-
-{% block extra-custom-scripts %}
-<style >
-    .table-heading{
-        color: #04a9cf;
-    }
-    </style>
-{% endblock %}
+{% block title %}My Workshops{% endblock %}
 
 {% block content %}
-    {% if not workshops %}
-        <div class="container">
-            <div class="jumbotron">
-                <h1>Welcome {{ user.first_name }}</h1>
-                <p>Information Related to your workshops will be shown here, you can also
-                    propose a Workshop as per your available date in <strong>Propose Workshop tab</strong> .</p>
-            </div>
+<div class="container-fluid px-4">
+  {% if not workshops %}
+    <!-- Welcome Hero -->
+    <div class="hero-banner">
+      <div class="hero-orb" style="width:280px;height:280px;top:-100px;right:-80px;"></div>
+      <div class="hero-orb" style="width:160px;height:160px;bottom:-60px;left:-40px;"></div>
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1>Welcome back, {{ user.first_name|default:user.username }}! 👋</h1>
+          <p>You haven't proposed any workshops yet. Use the <strong>Propose Workshop</strong> tab in the menu to get started and connect with instructors.</p>
         </div>
-    {% else %}
-        <h3 class="text-center">The status of your workshops </h3>
-        <br>
-
-        <!-- Accepted View -->
-
-        <br>
-        <div class="container">
-            <h3 class="text-center table-heading"><strong>Workshops Accepted</strong></h3>
-            <table class="table table-striped table-responsive-sm">
-                <thead>
-                <tr>
-                    <th>Workshop Name</th>
-                    <th>Instructor Name</th>
-                    <th>Workshop Day</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-
-                {% for workshop in workshops %}
-                    <tbody>
-                    <tr>
-                        {% if workshop.status %}
-                            <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" >{{ workshop.workshop_type |capfirst }}</a></td>
-                            <td>{{ workshop.instructor.get_full_name }}</td>
-                            <td>{{ workshop.date | date }}</td>
-                            <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
-                        {% endif %}
-                    </tr>
-                    </tbody>
-                {% endfor %}
-
-            </table>
+        <div class="col-md-4 text-right d-none d-md-block">
+          <a href="{% url 'workshop_app:propose_workshop' %}" class="btn btn-primary" style="background: rgba(255,255,255,0.25) !important; border: 2px solid rgba(255,255,255,0.4) !important; box-shadow: none; padding: 0.75rem 2rem; font-size: 1rem;">
+            + Propose Workshop
+          </a>
         </div>
-
-        <!-- Proposed View -->
-
-        <br>
-        <div class="container">
-            <h3 class="text-center table-heading"><strong>Workshops Proposed By Me</strong></h3>
-            <table class="table table-striped table-responsive-sm">
-                <thead>
-                <tr>
-                    <th>Workshop Name</th>
-                    <th>Workshop Day</th>
-                    <th>Status</th>
-                </tr>
-                </thead>
-                {% for workshop in workshops %}
-                    <tbody>
-                    <tr>
-                        {% if not workshop.status and workshop.tnc_accepted %}
-                            <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" >{{ workshop.workshop_type |capfirst }}</a></td>
-                            <td>{{ workshop.date | date }}</td>
-                            <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
-                        {% endif %}
-                    </tr>
-                    </tbody>
-
-                {% endfor %}
-            </table>
+      </div>
+    </div>
+    <!-- Quick stats placeholder -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #a855f7, #6366f1);">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Total Workshops</div>
+          <span class="stat-icon material-icons">event</span>
         </div>
-    {% endif %}
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Accepted</div>
+          <span class="stat-icon material-icons">check_circle</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Pending</div>
+          <span class="stat-icon material-icons">schedule</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+          <div class="stat-value">0</div>
+          <div class="stat-label">Upcoming</div>
+          <span class="stat-icon material-icons">upcoming</span>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    {% with total=workshops|length accepted=workshops accepted_count=0 pending_count=0 %}
+    <!-- Welcome Strip -->
+    <div class="hero-banner mb-4" style="padding: 2rem 3rem;">
+      <div class="hero-orb" style="width:200px;height:200px;top:-60px;right:-60px;"></div>
+      <h1 style="font-size:1.5rem;">Your Workshop Dashboard</h1>
+      <p>Track your proposed and accepted workshops in real time.</p>
+    </div>
 
+    <!-- Stats Row -->
+    <div class="row mb-4">
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #a855f7, #6366f1);">
+          <div class="stat-value">{{ workshops|length }}</div>
+          <div class="stat-label">Total Proposals</div>
+          <span class="stat-icon material-icons">folder_open</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #10b981, #059669);">
+          <div class="stat-value">
+            {% with cnt=0 %}{% for w in workshops %}{% if w.status %}{% with cnt=cnt|add:1 %}{% endwith %}{% endif %}{% endfor %}{{ cnt }}{% endwith %}
+          </div>
+          <div class="stat-label">Accepted</div>
+          <span class="stat-icon material-icons">check_circle</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b, #d97706);">
+          <div class="stat-value">
+            {% with cnt=0 %}{% for w in workshops %}{% if not w.status %}{% with cnt=cnt|add:1 %}{% endwith %}{% endif %}{% endfor %}{{ cnt }}{% endwith %}
+          </div>
+          <div class="stat-label">Pending</div>
+          <span class="stat-icon material-icons">schedule</span>
+        </div>
+      </div>
+      <div class="col-md-3 col-6 mb-3">
+        <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+          <div class="stat-value">{{ user.profile.position|title }}</div>
+          <div class="stat-label">Your Role</div>
+          <span class="stat-icon material-icons">badge</span>
+        </div>
+      </div>
+    </div>
+    {% endwith %}
+
+    <!-- Accepted Workshops Table -->
+    <div class="section-title">Accepted Workshops</div>
+    <div class="table-card mb-4">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Workshop</th>
+            <th>Instructor</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for workshop in workshops %}
+            {% if workshop.status %}
+            <tr>
+              <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" style="color:var(--primary);font-weight:600;text-decoration:none;">{{ workshop.workshop_type|capfirst }}</a></td>
+              <td>{{ workshop.instructor.get_full_name|default:"—" }}</td>
+              <td>{{ workshop.date|date }}</td>
+              <td><span class="badge badge-success">{{ workshop.get_status }}</span></td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr><td colspan="4" class="text-center text-muted py-4">No accepted workshops yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pending Workshops Table -->
+    <div class="section-title">Pending Proposals</div>
+    <div class="table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Workshop</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for workshop in workshops %}
+            {% if not workshop.status and workshop.tnc_accepted %}
+            <tr>
+              <td><a href="{% url 'workshop_app:workshop_details' workshop.id %}" style="color:var(--primary);font-weight:600;text-decoration:none;">{{ workshop.workshop_type|capfirst }}</a></td>
+              <td>{{ workshop.date|date }}</td>
+              <td><span class="badge badge-warning">{{ workshop.get_status }}</span></td>
+            </tr>
+            {% endif %}
+          {% empty %}
+            <tr><td colspan="3" class="text-center text-muted py-4">No pending proposals.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}
