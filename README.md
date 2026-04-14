@@ -48,11 +48,16 @@ For development and local testing purposes, you can jump straight into the appli
 Drop your UI screenshots into the `/docs/screenshots/` folder to populate your visual gallery perfectly:
 <img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/81ac632c-6391-4081-8332-bc4a433c360c" />
 <img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/46c0b9cc-7077-4a66-af70-59ca3b6b253c" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/1993bfe3-129a-44b8-aaa4-f13cbaa96f59" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/201c5457-28c7-4cff-bf71-30d99758d438" />
 
 
 
 ### 1. Instructor Dashboard
 ![Instructor Dashboard]()
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/39364fa9-3cdb-4202-a89c-e1f7372f9571" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/e4e2ffda-cbbf-4a60-abe0-abc16566cd2e" />
+
 *A look at the premium instructor toolkit with accepted and pending proposals.*
 
 ### 2. Coordinator Overview
