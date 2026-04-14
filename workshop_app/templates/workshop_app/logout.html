@@ -1,18 +1,86 @@
 {% extends 'workshop_app/base.html' %}
 
-	{% block title %}
-		Logged out
-	{% endblock %}
+{% block title %}
+    Logged out
+{% endblock %}
+
+{% block extra-dependencies %}
+<style>
+    body { display: flex; align-items: center; justify-content: center; background: #eef2f5; }
+    .base-content { padding-top: 5em; width: 100%; padding-bottom: 5em; min-height: calc(100vh - 100px); display: flex; flex-direction: column; justify-content: center;}
+    .logout-card {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        padding: 4rem 3rem;
+        max-width: 500px;
+        margin: 0 auto;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .logout-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; height: 6px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--indigo) 100%);
+    }
+    .icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+    }
+    .icon-wrapper .material-icons {
+        font-size: 40px;
+        color: var(--success);
+    }
+    .logout-title {
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+    .logout-subtitle {
+        color: var(--text-muted);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        line-height: 1.5;
+    }
+    .btn-login {
+        display: inline-block;
+        padding: 0.85rem 2rem;
+        border-radius: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--indigo) 100%);
+        color: white;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .btn-login:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px var(--primary-glow);
+        color: white;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
 
 
-	{% block content %}
-		<div class="container" align="center">
-			<br>
-			<h3>You have logged out successfully.</h3>
-			<h4>If you want to login again please
-				<a href="/">click here</a>
-			</h4>
-			<br>
-		</div>
-
-	{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="logout-card">
+            <div class="icon-wrapper">
+                <span class="material-icons">check_circle</span>
+            </div>
+            <h1 class="logout-title">You've been logged out</h1>
+            <p class="logout-subtitle">Thank you for using FOSSEE Workshops. Your session has been safely ended.</p>
+            <a href="{% url 'workshop_app:login' %}" class="btn-login">Sign in again</a>
+        </div>
+    </div>
+{% endblock %}

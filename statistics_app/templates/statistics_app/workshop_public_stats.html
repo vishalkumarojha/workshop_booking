@@ -2,139 +2,230 @@
 
 {% block title %} Statistics {% endblock %}
 
+{% block extra-dependencies %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid px-4">
+    <!-- Hero Banner -->
+    <div class="hero-banner mb-4" style="padding: 2rem 3rem;">
+      <div class="hero-orb" style="width:200px;height:200px;top:-60px;right:-60px;"></div>
+      <h1 style="font-size:1.5rem;">Workshop Statistics</h1>
+      <p>Analyze and track comprehensive workshop data across institutions.</p>
+    </div>
+
     <div class="row">
-        <div class="col-md-3">
+        <!-- Sidebar Filters -->
+        <div class="col-md-3 mb-4">
             <form method="GET">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <h3><u>Filters</u></h3>
-                            </div>
-                            <div class="col-md-4">
-                                <a href="{% url 'statistics_app:public' %}" class="btn btn-outline-info">
-                                    <i class="fa fa-times"></i>&nbsp;Clear
-                                </a>
-                            </div>
+                <div class="card" style="box-shadow: var(--card-shadow); border-radius: 20px;">
+                    <div class="card-header pb-0" style="background: transparent; border-bottom: none; padding: 1.5rem 1.5rem 0.5rem;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h3 style="font-size: 1.1rem; font-weight: 700; margin:0; color:var(--text-main);">Filters</h3>
+                            <a href="{% url 'statistics_app:public' %}" class="btn btn-sm btn-outline-secondary" style="border-radius:50px;">Clear</a>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div>From date: {{form.from_date}}</div>
-                        <div>To date: {{form.to_date}}</div>
-                        <div>Workshop: {{form.workshop_type}}</div>
-                        <div>State: {{form.state}}</div>
-                        <div>{{form.sort.help_text}}: {{form.sort}}</div>
+                    <div class="card-body pt-3">
+                        <div class="form-group mb-3">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;">From date</label>
+                            {{form.from_date}}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;">To date</label>
+                            {{form.to_date}}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;">Workshop Type</label>
+                            {{form.workshop_type}}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;">State</label>
+                            {{form.state}}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;">{{form.sort.help_text}}</label>
+                            {{form.sort}}
+                        </div>
                         {% if request.user.is_authenticated %}
-                        <div>{{form.show_workshops.help_text}}: {{form.show_workshops}}</div>
+                        <div class="form-group mb-4">
+                            <label class="text-muted" style="font-size:0.85rem; font-weight:600;"><span style="vertical-align:middle; margin-right:0.5rem;">{{form.show_workshops}}</span>{{form.show_workshops.help_text}}</label>
+                        </div>
                         {% endif %}
-                        <br>
-                        <div class="row justify-content-center">
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fa fa-eye"></i>&nbsp;View
-                                </button>
-                            </div>
-                            <div class="col-md-6">
-                                <button type="submit" class="btn btn-info" name="download" value="download">
-                                    <i class="fa fa-download"></i>&nbsp;Download
-                                </button>
-                            </div>
+                        
+                        <div class="d-flex flex-column" style="gap: 10px;">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="material-icons" style="font-size:18px;vertical-align:middle;">visibility</i> View Results
+                            </button>
+                            <button type="submit" class="btn btn-block" style="background:#f1f5f9; color:var(--text-main); font-weight:600; border:none;" name="download" value="download">
+                                <i class="material-icons" style="font-size:18px;vertical-align:middle;">file_download</i> Export CSV
+                            </button>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col">
-            <div class="row">
-                <div class="col-md-6">
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div class="d-flex align-items-center">
                     {% include "statistics_app/paginator.html" %}
                 </div>
-                <div class="col-md-3">
-                    <button class="btn btn-info" id="state_graph">
-                        <i class="fa fa-bar-chart"></i>&nbsp;State chart
+                <div style="display:flex; gap:0.5rem;">
+                    <button class="btn" style="background:var(--indigo); color:white;" id="state_graph">
+                        <i class="material-icons" style="font-size:16px;vertical-align:middle;">bar_chart</i> State Chart
                     </button>
-                </div>
-                <div class="col-md-3">
-                    <button class="btn btn-info" id="type_graph">
-                        <i class="fa fa-bar-chart"></i>&nbsp;Workshops chart
+                    <button class="btn" style="background:var(--primary); color:white;" id="type_graph">
+                        <i class="material-icons" style="font-size:16px;vertical-align:middle;">pie_chart</i> Workshop Chart
                     </button>
                 </div>
             </div>
-            <table class="table table-responsive-sm">
-                <thead>
-                    <tr>
-                        <th>Sr No.</th>
-                        <th>Coordinator Name</th>
-                        <th>Institute Name</th>
-                        <th>Instructor Name</th>
-                        <th>Workshop Name</th>
-                        <th>Workshop Date</th>
-                    </tr>
-                </thead>
-                {% csrf_token %}
-                {% for workshop in objects %}
-                    <tbody>
+
+            <div class="table-card mb-4">
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td>{{ forloop.counter0|add:objects.start_index}}</td>
-                            <td>{{ workshop.coordinator.get_full_name | capfirst }}</td>
+                            <th>Sr No.</th>
+                            <th>Coordinator Name</th>
+                            <th>Institute Name</th>
+                            <th>Instructor Name</th>
+                            <th>Workshop Name</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    {% csrf_token %}
+                    <tbody>
+                    {% for workshop in objects %}
+                        <tr>
+                            <td><span style="font-weight:600; font-size:0.85rem; color:var(--text-muted);"># {{ forloop.counter0|add:objects.start_index}}</span></td>
+                            <td>
+                                {% if request.user.is_authenticated %}
+                                <a href="{% url 'workshop_app:view_profile' workshop.coordinator.id %}" style="color:var(--primary);font-weight:600;text-decoration:none;">{{ workshop.coordinator.get_full_name | capfirst }}</a>
+                                {% else %}
+                                <span style="font-weight:600;">{{ workshop.coordinator.get_full_name | capfirst }}</span>
+                                {% endif %}
+                            </td>
                             <td>{{ workshop.coordinator.profile.institute | capfirst }}</td>
-                            <td>{{ workshop.instructor.get_full_name | capfirst }}</td>
-                            <td>{{ workshop.workshop_type.name }}</td>
+                            <td>{{ workshop.instructor.get_full_name | capfirst | default:"—" }}</td>
+                            <td><span class="badge" style="background:var(--primary-light); color:var(--primary);">{{ workshop.workshop_type.name }}</span></td>
                             <td>{{ workshop.date | date}}</td>
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">No workshops match your filters.</td>
+                        </tr>
+                    {% endfor %}
                     </tbody>
-                {% endfor %}
-            </table>
-            {% include "statistics_app/paginator.html" %}
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                {% include "statistics_app/paginator.html" %}
+            </div>
         </div>
     </div>
 </div>
 
 <!-- The Modal -->
-<div id="dialog" title="Workshops Statistics">
-    <canvas id="myChart"></canvas>
+<div id="dialog" title="Workshops Statistics" style="display:none; overflow:hidden;">
+    <div style="height:400px; width:100%; position:relative;">
+        <canvas id="myChart"></canvas>
+    </div>
 </div>
 
 <script type="text/javascript">
+    $(document).ready(function() {
+        // Apply bootstrap form controls via JS
+        $('.card-body input[type="text"], .card-body select').addClass('form-control');
+        $('.card-body input[type="checkbox"]').css('transform', 'scale(1.2)');
+        
+        // Remove browser default autocomplete
+        $('.card-body input').attr('autocomplete', 'off');
+    });
+
     var state_labels = {{ws_states|safe}};
     var state_data = {{ws_count|safe}};
     var type_labels = {{ws_type|safe}};
     var type_data = {{ws_type_count|safe}};
     var chart;
-    $("#state_graph").on("click", function() {
-        show_graph(state_labels, state_data, "State wise workshops");
+
+    $("#state_graph").on("click", function(e) {
+        e.preventDefault();
+        show_graph(state_labels, state_data, "State-wise Workshops");
     });
-    $("#type_graph").on("click", function() {
-        show_graph(type_labels, type_data, "Type wise workshops");
+    
+    $("#type_graph").on("click", function(e) {
+        e.preventDefault();
+        show_graph(type_labels, type_data, "Workshop-type Distribution");
     });
 
-    function show_graph(labels, data, graph_name, chart_name) {
+    function show_graph(labels, data, graph_name) {
         var ctx = document.getElementById('myChart').getContext('2d');
-        if(chart) chart.destroy();
+        if(chart) {
+            chart.destroy();
+        }
         chart = new Chart(ctx, {
-            // The type of chart we want to create
             type: 'bar',
-
-            // The data for our dataset
             data: {
                 labels: labels,
                 datasets: [{
                     data: data,
                     label: graph_name,
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
+                    backgroundColor: 'rgba(168, 85, 247, 0.7)',
+                    borderColor: 'rgb(168, 85, 247)',
+                    borderWidth: 2,
+                    borderRadius: 6
                 }]
             },
-            // Configuration options go here
-            options: {}
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0
+                        }
+                    }
+                }
+            }
         });
+        
         $("#dialog").dialog({
-            width: 900,
-            height: 500
+            width: 850,
+            height: 520,
+            modal: true,
+            classes: {
+                "ui-dialog": "card modal-glass"
+            }
         });
     }
 </script>
 
+<style>
+.modal-glass {
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+    padding: 0 !important;
+}
+.ui-dialog-titlebar {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 1.5rem !important;
+}
+.ui-dialog-title {
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+}
+.ui-widget-overlay {
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+}
+</style>
 {% endblock %}
