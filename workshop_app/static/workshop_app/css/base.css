@@ -1,19 +1,159 @@
 /**
- * Footer Styles
+ * Custom Glassmorphism Theme Overrides
  */
-.navbar {
-    z-index: 1000;
+:root {
+  --primary-color: #a855f7;
+  --primary-hover: #9333ea;
+  --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.5);
+  --text-main: #2d3748;
+  --text-muted: #718096;
 }
-.footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background-color: #61615F;
-    color: white;
-    text-align: center;
-    z-index: 100;
+
+body {
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-main);
+  min-height: 100vh;
 }
+
+/* Base Content Layout */
 .base-content {
-    padding-top: 5em;
-    padding-bottom: 5em;
+  padding-top: 6em;
+  padding-bottom: 6em;
+}
+
+/* Glassmorphism Cards */
+.card, .auth-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: var(--glass-border);
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  overflow: visible;
+}
+
+.card-body {
+  padding: 2.5rem;
+}
+
+/* Typography Overrides */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* Form Controls */
+.form-group label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-main);
+}
+
+.form-control {
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 0.8rem 1rem;
+  background-color: #f8fafc;
+  transition: all 0.3s ease;
+  color: var(--text-main);
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.2);
+  background-color: #ffffff;
+  outline: none;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 50px;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  transition: all 0.3s ease;
+  text-transform: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px rgba(168, 85, 247, 0.3);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  box-shadow: 0 6px 15px rgba(147, 51, 234, 0.4);
+}
+
+/* Navbar overrides */
+.navbar {
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--glass-border);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  z-index: 1000;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+.navbar-brand {
+  color: var(--primary-color) !important;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.navbar-brand i { /* optional icon */
+  margin-right: 0.5rem;
+}
+.nav-link {
+  color: var(--text-main) !important;
+  font-weight: 500;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+.nav-link:hover {
+  opacity: 1;
+  color: var(--primary-color) !important;
+}
+
+/* Footer overrides */
+.footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: var(--glass-border);
+  color: var(--text-muted);
+  text-align: center;
+  z-index: 100;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+}
+
+/* Tables in internal pages */
+table.table {
+  background: rgba(255,255,255,0.7);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+table.table thead th {
+  border-bottom: 2px solid #e2e8f0;
+  border-top: none;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+table.table td, table.table th {
+  border-top: 1px solid #e2e8f0;
+  vertical-align: middle;
 }

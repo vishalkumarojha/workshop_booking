@@ -1,53 +1,103 @@
 {% extends 'workshop_app/base.html' %}
 
 {% block title %}
-    Login
+    Sign In
+{% endblock %}
+
+{% block extra-dependencies %}
+<style>
+    body { display: flex; align-items: center; justify-content: center; background: #eef2f5; }
+    .base-content { padding-top: 5em; width: 100%; padding-bottom: 5em;}
+    .split-wrapper {
+        display: flex; min-height: 75vh; border-radius: 20px; overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1); background: #ffffff;
+        max-width: 1000px; margin: 0 auto;
+    }
+    .split-left {
+        flex: 1; background: linear-gradient(135deg, var(--primary-color) 0%, #6366f1 100%);
+        color: white; padding: 4rem; display: flex; flex-direction: column; justify-content: center;
+        position: relative;
+    }
+    .split-left h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; color: white; }
+    .split-left p { font-size: 1.1rem; opacity: 0.9; line-height: 1.5; }
+    
+    .split-right {
+        flex: 1; padding: 4rem; display: flex; flex-direction: column; justify-content: center;
+    }
+    .auth-title { font-weight: 700; font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .auth-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+    .auth-toggle {
+        display: flex; background: rgba(0, 0, 0, 0.04); border-radius: 50px; padding: 0.35rem; margin-bottom: 2rem;
+    }
+    .auth-toggle a {
+        flex: 1; padding: 0.6rem; border-radius: 50px; text-align: center; text-decoration: none;
+        color: var(--text-muted); font-weight: 600; transition: all 0.3s ease;
+    }
+    .auth-toggle a.active { background: #ffffff; color: var(--primary-color); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .form-group { margin-bottom: 1.25rem; }
+    .form-group label { display: none; }
+    .form-control { background-color: #f8fafc; border: none; padding: 1rem; font-size: 0.95rem; }
+    .form-control:focus { background-color: #ffffff; }
+    .btn-block { display: block; width: 100%; padding: 0.85rem; font-size: 1rem; margin-top: 1rem; }
+    .remember-forgot { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; margin-bottom: 1.5rem; }
+    @media (max-width: 768px) {
+        .split-wrapper { flex-direction: column; min-height: 90vh; }
+        .split-left { padding: 2.5rem; text-align: center; min-height: 250px; }
+        .split-right { padding: 2.5rem; }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6 col-md-offset-6">
-                <div class="card">
-                    <div class="card-body">
-                        <form class="px-3 py-3" method="post">
-                        {% csrf_token %}
-                        {% if form.errors %}
-                            {% for field in form %}
-                                {% for error in field.errors %}
-                                    <div class="alert alert-dismissible alert-danger">
-                                        <button type="button" class="close" data-dismiss="alert">
-                                            <i class="fa fa-close"></i>
-                                        </button>
-                                        <strong>{{ error|escape }}</strong>
-                                    </div>
-                                {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                                <div class="alert alert-dismissible alert-danger">
-                                    <button type="button" class="close" data-dismiss="alert">
-                                        <i class="fa fa-close"></i>
-                                    </button>
-                                    <strong>{{ error|escape }}</strong>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                        <div class="form-group">
-                          <label for="id_username">Username</label>
-                          {{ form.username }}
-                        </div>
-                        <div class="form-group">
-                          <label for="id_password">Password</label>
-                          {{ form.password }}
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sign in</button>
-                        </form>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'workshop_app:register' %}">New around here? Sign up</a>
-                        <a class="dropdown-item" href="{% url 'password_reset' %}">Forgot password?</a>
-                    </div>
-                </div>  
+<div class="container pb-5">
+    <div class="split-wrapper">
+        <div class="split-left">
+            <div style="position: absolute; top: -50px; left: -50px; width: 250px; height: 250px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+            <div style="position: absolute; bottom: -80px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.1);"></div>
+            <h1>FOSSEE</h1>
+            <p>Sign in to discover, manage, and engage with our extensive range of workshops to grow your skills.</p>
+        </div>
+        <div class="split-right">
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Sign in to access your dashboard.</p>
+            
+            <div class="auth-toggle">
+                <a href="javascript:void(0);" class="active">Sign in</a>
+                <a href="{% url 'workshop_app:register' %}">Sign up</a>
             </div>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger px-3 py-2" style="border-radius:10px;"><small>{{ error|escape }}</small></div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-danger px-3 py-2" style="border-radius:10px;"><small>{{ error|escape }}</small></div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="form-group">
+                    <input type="text" name="username" class="form-control" placeholder="Username" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" name="password" class="form-control" placeholder="Password" required>
+                </div>
+
+                <div class="remember-forgot">
+                    <div>
+                        <input type="checkbox" id="rememberMe"> 
+                        <label for="rememberMe" style="display:inline; color: var(--text-muted); cursor: pointer; font-weight: normal;">Remember Me</label>
+                    </div>
+                    <a href="{% url 'password_reset' %}" style="color: var(--primary-color); font-weight: 500;">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+            </form>
         </div>
     </div>
+</div>
 {% endblock %}
