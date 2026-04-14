@@ -35,7 +35,7 @@ For development and local testing purposes, you can jump straight into the appli
 
 | Role Type | Username | Password | Email |
 | :--- | :--- | :--- | :--- |
-| **Admin Setup** | `admin` | `...` | `your-admin@email.com` |
+| **Admin Setup** | `admin` | `adminpassword` | `your-admin@email.com` |
 | **Instructor** | `instructor1` | `password123` | `instructor1@example.com` |
 | **Coordinator** | `coordinator1` | `password123` | `coordinator1@example.com` |
 
@@ -46,24 +46,40 @@ For development and local testing purposes, you can jump straight into the appli
 ## 📸 Platform Previews
 
 Drop your UI screenshots into the `/docs/screenshots/` folder to populate your visual gallery perfectly:
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/81ac632c-6391-4081-8332-bc4a433c360c" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/46c0b9cc-7077-4a66-af70-59ca3b6b253c" />
+
+
 
 ### 1. Instructor Dashboard
-![Instructor Dashboard](docs/screenshots/instructor_dashboard.png)
+![Instructor Dashboard]()
 *A look at the premium instructor toolkit with accepted and pending proposals.*
 
 ### 2. Coordinator Overview
-![Coordinator Dashboard](docs/screenshots/coordinator_dashboard.png)
+![Coordinator Dashboard]()
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/25045ef4-9792-46ac-be20-247418d06437" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/51a61b0d-a9c0-4e0f-b577-58f8850e2e54" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/a1007de5-b613-4402-a0f3-b0fcff032a65" />
+
+
+
 *The hub where new educators can propose standard workshops.*
 
 ### 3. Public Statistics & Analytics
-![Global Statistics](docs/screenshots/statistics_chart.png)
+![Global Statistics]
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/25045ef4-9792-46ac-be20-247418d06437" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/51a61b0d-a9c0-4e0f-b577-58f8850e2e54" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/a1007de5-b613-4402-a0f3-b0fcff032a65" />
 *Bar chart visualizations of workshop density spread across different states.*
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/eec9b64d-1de7-4319-8359-cb81409982cd" />
 
-### 4. Split-Screen Authentication
-![Secure Login Menu](docs/screenshots/split_login.png)
-*The modernized split-screen sign-in gateway incorporating the FOSSEE mission.*
+
 
 ---
+other UI interface 
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/41e8004d-6c01-459d-aa45-373b7bb17f4e" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/08cce8f3-23a7-4786-9858-9eff470a643d" />
+<img width="1917" height="1007" alt="image" src="https://github.com/user-attachments/assets/017898df-3523-4199-ad77-490db27797e6" />
 
 ## 🚀 Getting Started Locally
 
